@@ -1,1 +1,230 @@
-'use strict';(function(){window.addEventListener('load',function(){function a(){var L=new Date,M=L.getHours();M=12<=M?M-12:M;var N=L.getMinutes(),O=L.getSeconds(),P=L.getMilliseconds(),Q=O+1e-3*P,R=N+Q/60,S=M+R/60,T=Math.cos(S*Math.PI/6),U=Math.sin(S*Math.PI/6),V=Math.cos(R*Math.PI/30),W=Math.sin(R*Math.PI/30),X=Math.cos(Q*Math.PI/30),Y=Math.sin(Q*Math.PI/30),Z=Math.cos(P*Math.PI/500),$=Math.sin(P*Math.PI/500);z.position.x=3*X,z.position.z=3*Y,z.rotation.y=2*Math.PI-Q*Math.PI/30,A.position.x=3*V,A.position.z=3*W,A.rotation.y=2*Math.PI-R*Math.PI/30,B.position.x=3*T,B.position.z=3*U,B.rotation.y=2*Math.PI-S*Math.PI/6,j.render(f,g),b&&requestAnimationFrame(a)}var b=!0,c=window.innerWidth,d=window.innerHeight,e=document.getElementById('webgl');window.addEventListener('keydown',function(L){b=27!==L.keyCode},!1);var f,g,h,j,l,n,o,p,r,t,u,v,x,z,A,B,C,D,E={fovy:100,aspect:c/d,near:0.5,far:30,x:-1,y:6,z:0,lookAt:new THREE.Vector3(0,0,0)},F={clearColor:14737632,width:c,height:d};f=new THREE.Scene,g=new THREE.PerspectiveCamera(E.fovy,E.aspect,E.near,E.far),g.position.x=E.x,g.position.y=E.y,g.position.z=E.z,g.lookAt(E.lookAt),h=new THREE.OrbitControls(g,a.domElement),j=new THREE.WebGLRenderer,j.setClearColor(new THREE.Color(F.clearColor)),j.setSize(F.width,F.height),e.appendChild(j.domElement),C=new THREE.DirectionalLight(16777215),D=new THREE.AmbientLight(16777215,0.2),f.add(C),f.add(D),l=new THREE.SphereGeometry(0.2,128,128),r=new THREE.MeshToonMaterial({color:12124160}),x=new THREE.Mesh(l,r),f.add(x),x.position.x=3*Math.cos(0),x.position.z=3*Math.sin(0);for(var G=0;12>G;G++){var H='clockBallGeometryi',I='clockBallMateriali',J='clockBalli';H=new THREE.SphereGeometry(0.1,128,128),I=new THREE.MeshToonMaterial({color:5395026}),J=new THREE.Mesh(H,I),f.add(J),J.position.x=3*Math.cos(G*Math.PI/6),J.position.z=3*Math.sin(G*Math.PI/6)}n=new THREE.TorusGeometry(0.3,0.1,64,64),t=new THREE.MeshToonMaterial({color:13845572}),z=new THREE.Mesh(n,t),f.add(z),o=new THREE.TorusGeometry(0.525,0.125,64,64),u=new THREE.MeshToonMaterial({color:13845572}),A=new THREE.Mesh(o,u),f.add(A),p=new THREE.TorusGeometry(0.75,0.15,64,64),v=new THREE.MeshToonMaterial({color:13845572}),B=new THREE.Mesh(p,v),f.add(B);a()},!1)})();
+(() => {
+    window.addEventListener('load', () => {
+        
+        // variables
+        let run = true;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let targetDOM = document.getElementById('webgl');
+
+        // event
+        window.addEventListener('keydown', (eve) => {
+            run = eve.keyCode !== 27;
+        }, false);
+
+        // three.js class
+        let scene;
+        let camera;
+        let controls;
+        let renderer;
+
+        // let clock geometrys;
+        let clockBaseGeometry;
+        let clockBallGeometry;
+        let milliSecondGeometry;
+        let secondGeometry;
+        let minuteGeometry;
+        let hourGeometry;
+
+        // let clock materials
+        let clockBaseMaterial;
+        let clockBallMaterial;
+        let milliMaterial;
+        let secondMaterial;
+        let minuteMaterial;
+        let hourMaterial;
+
+        // let clock parts
+        let clockBaseCircle;
+        let clockBall;
+        let milliSecondSphere;
+        let secondSphere;
+        let minuteSphere;
+        let hourSphere;
+        let directional;
+        let ambient;
+
+        // parameter
+        let CAMERA_PARAMETER = {
+            fovy: 100,
+            aspect: width / height,
+            near: 0.5,
+            far: 30.0,
+            x: -1.0,
+            y: 6.0,
+            z: 0.0,
+            lookAt: new THREE.Vector3(0.0, 0.0, 0.0)
+        };
+        let RENDERER_PARAMETER = {
+            clearColor: 0xe0e0e0,
+            width: width,
+            height: height
+        };
+
+        // initialize scene
+        scene = new THREE.Scene();
+
+        // initialize camera
+        camera = new THREE.PerspectiveCamera(
+            CAMERA_PARAMETER.fovy,
+            CAMERA_PARAMETER.aspect,
+            CAMERA_PARAMETER.near,
+            CAMERA_PARAMETER.far
+        );
+        camera.position.x = CAMERA_PARAMETER.x;
+        camera.position.y = CAMERA_PARAMETER.y;
+        camera.position.z = CAMERA_PARAMETER.z;
+        camera.lookAt(CAMERA_PARAMETER.lookAt);
+
+        // initialize controls
+        controls = new THREE.OrbitControls(camera, render.domElement);
+
+        // initialize renderer
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(new THREE.Color(RENDERER_PARAMETER.clearColor));
+        renderer.setSize(RENDERER_PARAMETER.width, RENDERER_PARAMETER.height);
+        targetDOM.appendChild(renderer.domElement);
+
+        // initialize light
+        directional = new THREE.DirectionalLight(0xffffff);
+        ambient = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(directional);
+        scene.add(ambient);
+
+        /*=================
+        時計
+        ===================*/
+
+        /* 時計盤
+        clockBaseGeometry = new THREE.TorusGeometry(3, 0.02, 64, 64);
+        clockBaseMaterial = new THREE.MeshToonMaterial({
+            color: 0x4671ff,
+        });
+        clockBaseCircle = new THREE.Mesh(clockBaseGeometry, clockBaseMaterial);
+        scene.add(clockBaseCircle);
+        clockBaseCircle.rotation.x = Math.PI / 2;
+        */
+
+
+        // 基盤の印
+        clockBallGeometry = new THREE.SphereGeometry(0.15, 128, 128);
+        clockBallMaterial = new THREE.MeshToonMaterial({
+            color: 0xb90000,
+        });
+        clockBall = new THREE.Mesh(clockBallGeometry, clockBallMaterial);
+        scene.add(clockBall);
+        clockBall.position.x = 3 * Math.cos(0);
+        clockBall.position.z = 3 * Math.sin(0);
+
+        for (let i = 0; i < 12; i++) {
+            let clockBallGeometryI = "clockBallGeometry" + "i";
+            let clockBallMaterialI = "clockBallMaterial" + "i";
+            let clockBallI = "clockBall" + "i";
+            clockBallGeometryI = new THREE.SphereGeometry(0.1, 128, 128);
+            clockBallMaterialI = new THREE.MeshToonMaterial({
+                color: 0x525252,
+            });
+            clockBallI = new THREE.Mesh(clockBallGeometryI, clockBallMaterialI);
+            scene.add(clockBallI);
+
+            clockBallI.position.x = 3 * Math.cos(i * Math.PI / 6);
+            clockBallI.position.z = 3 * Math.sin(i * Math.PI / 6);
+        }
+
+        /* ミリ秒針の設定
+        milliSecondGeometry = new THREE.SphereGeometry(0.1, 128, 128);
+        milliMaterial = new THREE.MeshToonMaterial({
+            color: 0x2f2f2f,
+            //specular: 0xffffff
+        });
+        milliSecondSphere = new THREE.Mesh(milliSecondGeometry, milliMaterial);
+        scene.add(milliSecondSphere);
+        */
+
+        // 秒針の設定
+        secondGeometry = new THREE.TorusGeometry(0.25, 0.1, 64, 64);
+        secondMaterial = new THREE.MeshToonMaterial({
+            color: 0xba1c1c,
+        });
+        secondSphere = new THREE.Mesh(secondGeometry, secondMaterial);
+        scene.add(secondSphere);
+
+        // 長針の設定
+        minuteGeometry = new THREE.TorusGeometry(0.47, 0.12, 64, 64);
+        minuteMaterial = new THREE.MeshToonMaterial({
+            color: 0xba1c1c,
+        });
+        minuteSphere = new THREE.Mesh(minuteGeometry, minuteMaterial);
+        scene.add(minuteSphere);
+
+        // 短針の設定
+        hourGeometry = new THREE.TorusGeometry(0.70, 0.15, 64, 64);
+        hourMaterial = new THREE.MeshToonMaterial({
+            color: 0xba1c1c,
+        });
+        hourSphere = new THREE.Mesh(hourGeometry, hourMaterial);
+        scene.add(hourSphere);
+        
+        
+        // variable
+        let count = 0;
+
+        // rendering
+        render();
+
+        function render() {
+            // clock
+            let date = new Date();
+
+            // 現在の時間の取得
+            let hour = date.getHours();
+            hour = hour >= 12 ? hour - 12 : hour;
+            let minute = date.getMinutes();
+            let second = date.getSeconds();
+            let milliSecond = date.getMilliseconds();
+            let detailedSecond = second + 0.001 * milliSecond;
+            let detailedMunute = minute + detailedSecond / 60;
+            let detailedHour = hour + detailedMunute / 60;
+
+            // cis,sin
+            let hourCos = Math.cos(detailedHour * Math.PI / 6);
+            let hourSin = Math.sin(detailedHour * Math.PI / 6);
+            let minuteCos = Math.cos(detailedMunute * Math.PI / 30);
+            let minuteSin = Math.sin(detailedMunute * Math.PI / 30);
+            let secondCos = Math.cos(detailedSecond * Math.PI / 30);
+            let secondSin = Math.sin(detailedSecond * Math.PI / 30);
+            let milliSecondCos = Math.cos(milliSecond * Math.PI / 500);
+            let milliSecondSin = Math.sin(milliSecond * Math.PI / 500);
+
+            // ミリ秒針の動き
+            // milliSecondSphere.position.x = 3 * milliSecondCos;
+            // milliSecondSphere.position.z = 3 * milliSecondSin;
+
+            // 秒針の動き
+            secondSphere.position.x = 3 * secondCos;
+            secondSphere.position.z = 3 * secondSin;
+            secondSphere.rotation.y = 2 * Math.PI - detailedSecond * Math.PI / 30;
+
+            // 分針の動き
+            minuteSphere.position.x = 3 * minuteCos;
+            minuteSphere.position.z = 3 * minuteSin;
+            minuteSphere.rotation.y = 2 * Math.PI - detailedMunute * Math.PI / 30;
+
+            //短針の動き
+            hourSphere.position.x = 3 * hourCos;
+            hourSphere.position.z = 3 * hourSin;
+            hourSphere.rotation.y = 2 * Math.PI - detailedHour * Math.PI / 6;
+
+            // rendering
+            renderer.render(scene, camera);
+            // animation
+            if (run) {
+                requestAnimationFrame(render);
+            }
+        }
+        // 座標軸
+        // var axis = new THREE.AxisHelper(1000);
+        // axis.position.set(0, 0, 0);
+        // scene.add(axis);
+    }, false);
+})();
