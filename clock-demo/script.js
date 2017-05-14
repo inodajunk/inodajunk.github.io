@@ -20,6 +20,7 @@
         }, false);
 
 
+        /* カメラの動きをマウスで調整
         window.addEventListener('mousemove', (event) => {
             let w = window.innerWidth;
             let h = window.innerHeight;
@@ -32,6 +33,7 @@
             camera.position.x = -1.0 + x;
             camera.position.z = 0.0 - y;
         })
+        */
 
 
         // three.js class
