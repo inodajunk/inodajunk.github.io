@@ -1,6 +1,6 @@
 (() => {
     window.addEventListener('load', () => {
-        
+
         // variables
         let run = true;
         let width = window.innerWidth;
@@ -10,6 +10,30 @@
         // event
         window.addEventListener('keydown', (eve) => {
             run = eve.keyCode !== 27;
+        }, false);
+
+        window.addEventListener('mousemove', (event) => {
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            let x = event.clientX * 2.0 - w;
+            let y = event.clientY * 2.0 - h;
+            let length = Math.sqrt(x ** 2 + y ** 2)
+            // 単位ベクトルにする
+            x /= length;
+            y /= length;
+            camera.position.x = -1.0 + x;
+            camera.position.z = 0.0 - y;
+        })
+
+        function Update() {
+            camera.x += -1.0 + Input.acceleration.x * speed;
+            camera.z += 0.0 - Input.acceleration.y * speed;
+        }
+
+        window.addEventListener('resize', function () {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
         }, false);
 
         // three.js class
@@ -164,8 +188,8 @@
         });
         hourSphere = new THREE.Mesh(hourGeometry, hourMaterial);
         scene.add(hourSphere);
-        
-        
+
+
         // variable
         let count = 0;
 
@@ -221,6 +245,7 @@
             if (run) {
                 requestAnimationFrame(render);
             }
+            
         }
         // 座標軸
         // var axis = new THREE.AxisHelper(1000);
