@@ -12,6 +12,14 @@
             run = eve.keyCode !== 27;
         }, false);
 
+
+        window.addEventListener('resize', function () {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        }, false);
+
+
         window.addEventListener('mousemove', (event) => {
             let w = window.innerWidth;
             let h = window.innerHeight;
@@ -25,16 +33,6 @@
             camera.position.z = 0.0 - y;
         })
 
-        function Update() {
-            camera.x += -1.0 + Input.acceleration.x * speed;
-            camera.z += 0.0 - Input.acceleration.y * speed;
-        }
-
-        window.addEventListener('resize', function () {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        }, false);
 
         // three.js class
         let scene;
@@ -245,7 +243,7 @@
             if (run) {
                 requestAnimationFrame(render);
             }
-            
+
         }
         // 座標軸
         // var axis = new THREE.AxisHelper(1000);
