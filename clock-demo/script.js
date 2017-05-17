@@ -35,7 +35,6 @@
         })
         */
 
-
         // three.js class
         let scene;
         let camera;
@@ -131,7 +130,7 @@
 
 
         // 基盤の印
-        clockBallGeometry = new THREE.TorusGeometry(0.15, 128, 128);
+        clockBallGeometry = new THREE.SphereGeometry(0.15, 128, 128);
         clockBallMaterial = new THREE.MeshToonMaterial({
             color: 0xb90000,
         });
