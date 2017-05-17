@@ -61,10 +61,10 @@
         // let clock parts
         let clockBaseCircle;
         let clockBall;
-        let milliSecondSphere;
-        let secondSphere;
-        let minuteSphere;
-        let hourSphere;
+        let milliSecondTorus;
+        let secondTorus;
+        let minuteTorus;
+        let hour;
         let directional;
         let ambient;
 
@@ -131,7 +131,7 @@
 
 
         // 基盤の印
-        clockBallGeometry = new THREE.SphereGeometry(0.15, 128, 128);
+        clockBallGeometry = new THREE.TorusGeometry(0.15, 128, 128);
         clockBallMaterial = new THREE.MeshToonMaterial({
             color: 0xb90000,
         });
@@ -170,24 +170,24 @@
         secondMaterial = new THREE.MeshToonMaterial({
             color: 0xba1c1c,
         });
-        secondSphere = new THREE.Mesh(secondGeometry, secondMaterial);
-        scene.add(secondSphere);
+        secondTorus = new THREE.Mesh(secondGeometry, secondMaterial);
+        scene.add(secondTorus);
 
         // 長針の設定
         minuteGeometry = new THREE.TorusGeometry(0.47, 0.12, 64, 64);
         minuteMaterial = new THREE.MeshToonMaterial({
             color: 0xba1c1c,
         });
-        minuteSphere = new THREE.Mesh(minuteGeometry, minuteMaterial);
-        scene.add(minuteSphere);
+        minuteTorus = new THREE.Mesh(minuteGeometry, minuteMaterial);
+        scene.add(minuteTorus);
 
         // 短針の設定
         hourGeometry = new THREE.TorusGeometry(0.70, 0.15, 64, 64);
         hourMaterial = new THREE.MeshToonMaterial({
             color: 0xba1c1c,
         });
-        hourSphere = new THREE.Mesh(hourGeometry, hourMaterial);
-        scene.add(hourSphere);
+        hourTorus = new THREE.Mesh(hourGeometry, hourMaterial);
+        scene.add(hourTorus);
 
 
         // variable
@@ -225,19 +225,19 @@
             // milliSecondSphere.position.z = 3 * milliSecondSin;
 
             // 秒針の動き
-            secondSphere.position.x = 3 * secondCos;
-            secondSphere.position.z = 3 * secondSin;
-            secondSphere.rotation.y = 2 * Math.PI - detailedSecond * Math.PI / 30;
+            secondTorus.position.x = 3 * secondCos;
+            secondTorus.position.z = 3 * secondSin;
+            secondTorus.rotation.y = 2 * Math.PI - detailedSecond * Math.PI / 30;
 
             // 分針の動き
-            minuteSphere.position.x = 3 * minuteCos;
-            minuteSphere.position.z = 3 * minuteSin;
-            minuteSphere.rotation.y = 2 * Math.PI - detailedMunute * Math.PI / 30;
+            minuteTorus.position.x = 3 * minuteCos;
+            minuteTorus.position.z = 3 * minuteSin;
+            minuteTorus.rotation.y = 2 * Math.PI - detailedMunute * Math.PI / 30;
 
             //短針の動き
-            hourSphere.position.x = 3 * hourCos;
-            hourSphere.position.z = 3 * hourSin;
-            hourSphere.rotation.y = 2 * Math.PI - detailedHour * Math.PI / 6;
+            hourTorus.position.x = 3 * hourCos;
+            hourTorus.position.z = 3 * hourSin;
+            hourTorus.rotation.y = 2 * Math.PI - detailedHour * Math.PI / 6;
 
             // rendering
             renderer.render(scene, camera);
